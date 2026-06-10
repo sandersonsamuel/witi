@@ -1,13 +1,22 @@
-import { PlayersList } from "@/components/setup/player/players-list";
-import { SelectTopic } from "@/components/setup/topic/select-topic";
-import { WhatTopic } from "@/components/setup/topic/what-topic";
+"use client";
+
+import { GameState } from "@/@types/game";
+import { RevealGame } from "@/components/reveal";
+import { SetupGame } from "@/components/setup";
+import { parseAsStringEnum, useQueryState } from "nuqs";
 
 export default function ThemePage() {
+  const [gameState, _] = useQueryState(
+    "state",
+    parseAsStringEnum<GameState>(Object.values(GameState)).withDefault(
+      GameState.SETUP,
+    ),
+  );
+
   return (
-    <div className="flex flex-col items-center px-4 py-5 w-full overflow-x-hidden">
-      <PlayersList />
-      <WhatTopic />
-      <SelectTopic />
+    <div className="flex flex-col items-center w-full overflow-x-hidden">
+      {gameState === GameState.SETUP && <SetupGame />}
+      {gameState === GameState.REVEAL && <RevealGame />}
     </div>
   );
 }

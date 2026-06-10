@@ -1,21 +1,38 @@
 "use client";
 
+import { GameState } from "@/@types/game";
+import { getWordHints } from "@/app/actions/theme/word_hints";
+import { useThemeWords } from "@/app/hooks/themes/use-theme-words";
 import { useThemes } from "@/app/hooks/themes/use-themes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DynamicIcon } from "@/components/ui/dinamic-icon";
 import { Input } from "@/components/ui/input";
-import { SendHorizontal } from "lucide-react";
-import { useState } from "react";
-import { motion } from "motion/react";
+import { random } from "@/lib/utils";
+import useGame from "@/store/game-store";
 import { usePlayers } from "@/store/player-store";
+import { SendHorizontal } from "lucide-react";
+import { motion } from "motion/react";
+import { parseAsStringEnum, useQueryState } from "nuqs";
+import { useState } from "react";
 
 const MotionCard = motion.create(Card);
 
 export const SelectTopic = () => {
-  const { data } = useThemes();
   const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
 
+  const { data: themes } = useThemes();
+  const { data: themeWords, isFetching: isFetchingThemeWords } =
+    useThemeWords(selectedTheme);
+
+  const [_, setGameState] = useQueryState(
+    "state",
+    parseAsStringEnum<GameState>(Object.values(GameState)).withDefault(
+      GameState.SETUP,
+    ),
+  );
+
+  const createGame = useGame((state) => state.createGame);
   const players = usePlayers((state) => state.players);
 
   const handleSelectTheme = (themeId: string) => {
@@ -26,10 +43,28 @@ export const SelectTopic = () => {
     setSelectedTheme(themeId);
   };
 
+  const playGame = async () => {
+    if (!selectedTheme || players.length <= 1 || !themeWords) {
+      return;
+    }
+
+    const themeWord = themeWords[random(0, themeWords.length - 1)];
+    const impostorTip = await getWordHints(themeWord.id);
+
+    const newGame = {
+      impostorIndex: random(0, players.length - 1),
+      word: themeWord.word,
+      impostorTip: impostorTip[random(0, impostorTip.length - 1)].hint,
+    };
+
+    createGame(newGame);
+    setGameState(GameState.REVEAL);
+  };
+
   return (
     <div className="grid grid-cols-1 w-full gap-3">
       <div className="grid grid-cols-2 w-full gap-3">
-        {data?.map((theme) => {
+        {themes?.map((theme) => {
           return (
             <MotionCard
               whileTap={{ scale: 0.95 }}
@@ -65,10 +100,16 @@ export const SelectTopic = () => {
         <SendHorizontal />
       </div>
       <Button
-        disabled={!selectedTheme || players.length === 0}
+        onClick={playGame}
+        disabled={
+          !selectedTheme ||
+          players.length <= 1 ||
+          isFetchingThemeWords ||
+          !themeWords?.length
+        }
         className="h-15 rounded-4xl text-lg"
       >
-        Confirmar
+        Jogar
       </Button>
     </div>
   );

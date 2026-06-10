@@ -42,7 +42,6 @@ export const AddPlayer = () => {
   >();
 
   const addStorePlayer = usePlayers((state) => state.addPlayer);
-  const players = usePlayers((state) => state.players);
 
   const filledPlayer = !!playerName && !!playerSelectedColor;
 
@@ -50,10 +49,6 @@ export const AddPlayer = () => {
     if (color === playerSelectedColor) return playerSetSelectedColor(null);
     playerSetSelectedColor(color);
   };
-
-  useEffect(() => {
-    console.log(players);
-  }, [players]);
 
   const formAction = () => {
     if (!playerName || !playerSelectedColor) {

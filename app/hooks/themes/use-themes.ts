@@ -1,4 +1,4 @@
-import { getThemes } from "@/app/actions/auth/themes";
+import { getThemes } from "@/app/actions/theme/themes";
 import { useQuery } from "@tanstack/react-query";
 
 export const useThemes = () => {
