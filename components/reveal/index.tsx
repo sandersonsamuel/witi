@@ -1,14 +1,21 @@
 import { useState } from "react";
-
 import { AnimatePresence, motion } from "motion/react";
-
 import useGame from "@/store/game-store";
 import { usePlayers } from "@/store/player-store";
-
 import { Button } from "../ui/button";
+import { redirect } from "next/navigation";
+import { parseAsStringEnum, useQueryState } from "nuqs";
+import { GameState } from "@/@types/game";
 
 export const RevealGame = () => {
   const [hover, setHover] = useState(false);
+
+  const [_, setGameState] = useQueryState(
+    "state",
+    parseAsStringEnum<GameState>(Object.values(GameState)).withDefault(
+      GameState.SETUP,
+    ),
+  );
 
   const game = useGame((state) => state.gameSetup);
   const currentUser = useGame((state) => state.currentRevealUser);
@@ -18,7 +25,14 @@ export const RevealGame = () => {
   const players = usePlayers((state) => state.players);
   const currentPlayer = players[currentUser];
 
+  if (!currentPlayer) return null;
+  if (!game) return redirect("/game");
+
   const isImpostor = currentUser === game?.impostorIndex;
+
+  const onFinishReveal = () => {
+    setGameState(GameState.RESULT);
+  };
 
   return (
     <div
@@ -131,7 +145,10 @@ export const RevealGame = () => {
           className="rounded-full bg-white/20 size-20 border-4"
         ></motion.div>
 
-        <Button onClick={incrementCurretRevealUser} size={"lg"}>
+        <Button
+          onClick={() => incrementCurretRevealUser(onFinishReveal)}
+          size={"lg"}
+        >
           Continuar
         </Button>
       </div>

@@ -3,6 +3,7 @@
 import { GameState } from "@/@types/game";
 import { RevealGame } from "@/components/reveal";
 import { SetupGame } from "@/components/setup";
+import { TimeResultGame } from "@/components/time";
 import { parseAsStringEnum, useQueryState } from "nuqs";
 
 export default function ThemePage() {
@@ -17,6 +18,7 @@ export default function ThemePage() {
     <div className="flex flex-col items-center w-full overflow-x-hidden">
       {gameState === GameState.SETUP && <SetupGame />}
       {gameState === GameState.REVEAL && <RevealGame />}
+      {gameState === GameState.RESULT && <TimeResultGame />}
     </div>
   );
 }
