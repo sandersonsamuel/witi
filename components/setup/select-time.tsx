@@ -13,13 +13,13 @@ export const SelectTime = () => {
   return (
     <div className="flex flex-col gap-3">
       <h3>Tempo de jogo: </h3>
-      <div className="flex gap-3">
+      <div className="flex gap-2">
         {limitTimes.map((limit) => (
           <span
             onClick={() => setTime(limit.ms)}
             key={limit.label}
             className={cn(
-              "border p-3 rounded-full",
+              "border p-1 rounded-full px-2 text-sm",
               gameTime === limit.ms && "border-2 border-white/50",
             )}
           >
