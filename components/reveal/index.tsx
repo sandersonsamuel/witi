@@ -144,9 +144,11 @@ export const RevealGame = () => {
           onTapStart={() => setHover(true)}
           onTapCancel={() => setHover(false)}
           onTap={() => setHover(false)}
+          onContextMenu={(e) => e.preventDefault()}
           whileTap={{ scale: 1.3 }}
           transition={{ duration: 0.3 }}
-          className="rounded-full bg-white/20 size-20 border-4"
+          className="rounded-full bg-white/20 size-20 border-4 select-none"
+          style={{ WebkitUserSelect: "none", WebkitTouchCallout: "none" }}
         ></motion.div>
 
         <Button
