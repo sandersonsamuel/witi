@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { usePlayers } from "./player-store";
-import { limitTimes } from "@/components/setup/select-time";
+import { limitTimes } from "@/lib/game-constants";
 
 export interface Game {
   impostorIndex: number;

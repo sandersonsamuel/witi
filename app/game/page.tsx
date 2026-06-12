@@ -1,12 +1,14 @@
 "use client";
 
+import { Suspense } from "react";
+
 import { GameState } from "@/@types/game";
 import { RevealGame } from "@/components/reveal";
 import { SetupGame } from "@/components/setup";
 import { TimeResultGame } from "@/components/time";
 import { parseAsStringEnum, useQueryState } from "nuqs";
 
-export default function ThemePage() {
+function GameContent() {
   const [gameState, _] = useQueryState(
     "state",
     parseAsStringEnum<GameState>(Object.values(GameState)).withDefault(
@@ -20,5 +22,13 @@ export default function ThemePage() {
       {gameState === GameState.REVEAL && <RevealGame />}
       {gameState === GameState.RESULT && <TimeResultGame />}
     </div>
+  );
+}
+
+export default function ThemePage() {
+  return (
+    <Suspense>
+      <GameContent />
+    </Suspense>
   );
 }

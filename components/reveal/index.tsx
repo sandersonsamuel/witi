@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import useGame from "@/store/game-store";
 import { usePlayers } from "@/store/player-store";
@@ -24,6 +24,10 @@ export const RevealGame = () => {
   );
   const players = usePlayers((state) => state.players);
   const currentPlayer = players[currentUser];
+
+  useEffect(() => {
+    setHover(false);
+  }, [currentUser]);
 
   if (!currentPlayer) return null;
   if (!game) return redirect("/game");
