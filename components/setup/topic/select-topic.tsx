@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DynamicIcon } from "@/components/ui/dinamic-icon";
 import { Input } from "@/components/ui/input";
-import { random } from "@/lib/utils";
+import { random, randomUniqueNumbers } from "@/lib/utils";
 import useGame from "@/store/game-store";
 import { usePlayers } from "@/store/player-store";
 import { SendHorizontal } from "lucide-react";
@@ -34,6 +34,8 @@ export const SelectTopic = () => {
 
   const createGame = useGame((state) => state.createGame);
   const players = usePlayers((state) => state.players);
+  const impostorQuantity = useGame((state) => state.impostorQuantity);
+  const pickUnusedWordId = useGame((state) => state.pickUnusedWordId);
 
   const handleSelectTheme = (themeId: string) => {
     if (selectedTheme === themeId) {
@@ -48,11 +50,19 @@ export const SelectTopic = () => {
       return;
     }
 
-    const themeWord = themeWords[random(0, themeWords.length - 1)];
+    const themeWordId = pickUnusedWordId(
+      selectedTheme,
+      themeWords.map((word) => word.id),
+    );
+    const themeWord = themeWords.find((word) => word.id === themeWordId)!;
     const impostorTip = await getWordHints(themeWord.id);
 
     const newGame = {
-      impostorIndex: random(0, players.length - 1),
+      impostorIndex: randomUniqueNumbers(
+        0,
+        players.length - 1,
+        impostorQuantity,
+      ),
       word: themeWord.word,
       impostorTip: impostorTip[random(0, impostorTip.length - 1)].hint,
     };

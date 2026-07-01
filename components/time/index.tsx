@@ -49,7 +49,9 @@ export const TimeResultGame = () => {
   const seconds =
     timeLeft !== null ? Math.floor((timeLeft % 60_000) / 1000) : null;
 
-  const impostor = players[game?.impostorIndex ?? -1];
+  const impostors = (game?.impostorIndex ?? [])
+    .map((index) => players[index])
+    .filter(Boolean);
 
   return (
     <div className="w-screen h-screen px-4 py-5 flex flex-col items-center justify-around">
@@ -84,7 +86,7 @@ export const TimeResultGame = () => {
       </div>
 
       <div className="flex flex-col items-center gap-4 mb-10 w-full px-4">
-        {ended && impostor && (
+        {ended && impostors.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -92,9 +94,11 @@ export const TimeResultGame = () => {
             className="w-full bg-white/10 rounded-2xl px-6 py-4 text-center"
           >
             <span className="text-xs uppercase tracking-widest text-white/50 block mb-1">
-              o impostor era
+              {impostors.length > 1 ? "os impostores eram" : "o impostor era"}
             </span>
-            <p className="text-3xl font-black text-red-300">{impostor.name}</p>
+            <p className="text-3xl font-black text-red-300">
+              {impostors.map((impostor) => impostor.name).join(", ")}
+            </p>
             <p className="text-sm text-white/50 mt-1">
               A dica era: "{game?.impostorTip}"
             </p>

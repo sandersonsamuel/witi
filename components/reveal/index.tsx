@@ -32,7 +32,7 @@ export const RevealGame = () => {
   if (!currentPlayer) return null;
   if (!game) return redirect("/game");
 
-  const isImpostor = currentUser === game?.impostorIndex;
+  const isImpostor = game?.impostorIndex.includes(currentUser);
 
   const onFinishReveal = () => {
     setGameState(GameState.RESULT);
